@@ -11696,7 +11696,7 @@ mxDragSource.prototype.startDrag = function(evt)
 {
 	this.dragElement = this.createDragElement(evt);
 	this.dragElement.style.position = 'absolute';
-	this.dragElement.style.zIndex = '3';
+	this.dragElement.style.zIndex = '3000';
 	mxUtils.setOpacity(this.dragElement, 70);
 };
 
