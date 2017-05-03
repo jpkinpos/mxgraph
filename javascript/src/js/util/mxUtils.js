@@ -1386,7 +1386,7 @@ var mxUtils =
 	 */
 	load: function(url)
 	{
-		var req = new mxXmlRequest(url, null, 'GET', false);
+		var req = new mxXmlRequest(url, null, 'GET', true); //load async
 		req.send();
 		
 		return req;
