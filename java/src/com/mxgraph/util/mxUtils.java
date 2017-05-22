@@ -13,6 +13,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextAttribute;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -54,6 +55,8 @@ import com.mxgraph.model.mxCellPath;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.model.mxIGraphModel;
 import com.mxgraph.view.mxCellState;
+
+import static java.util.Collections.singletonMap;
 
 /**
  * Contains various helper methods for use with mxGraph.
@@ -1668,8 +1671,10 @@ public class mxUtils
 				: Font.PLAIN;
 		swingFontStyle += ((fontStyle & mxConstants.FONT_ITALIC) == mxConstants.FONT_ITALIC) ? Font.ITALIC
 				: Font.PLAIN;
+		Map<TextAttribute, Integer> fontAttributes = (fontStyle & mxConstants.FONT_UNDERLINE) == mxConstants.FONT_UNDERLINE ?
+													 singletonMap(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON) : null;
 
-		return new Font(fontFamily, swingFontStyle, (int) (fontSize * scale));
+		return new Font(fontFamily, swingFontStyle, (int) (fontSize * scale)).deriveFont(fontAttributes);
 	}
 
 	/**
