@@ -346,11 +346,25 @@ var mxEvent =
 	 * 
 	 * funct - Handler function that takes the event argument and a boolean up
 	 * argument for the mousewheel direction.
+	 * 
+	 * options - optional object that holds extra options
+	 * and has following possible properties:
+	 * 
+	 * 		target - Element to filter events with. Must be event's target or
+	 * 		target's ancestor.
+	 * 
+	 * 		filter - Custom filter function that takes same arguments as the
+	 * 		handler and returns a boolean. If the returned boolean is false,
+	 * 		the event gets ignored.	
+	 * 
+	 * 		preventDefault - Prevent default behavior (default = false)
 	 */
-	addMouseWheelListener: function(funct)
+	addMouseWheelListener: function(funct, options)
 	{
 		if (funct != null)
 		{
+			var scrollBuffer = 0;
+
 			var wheelHandler = function(evt)
 			{
 				// IE does not give an event object but the
@@ -360,9 +374,9 @@ var mxEvent =
 				{
 					evt = window.event;
 				}
-			
+
 				var delta = 0;
-				
+
 				if (mxClient.IS_FF)
 				{
 					delta = -evt.detail / 2;
@@ -371,11 +385,56 @@ var mxEvent =
 				{
 					delta = evt.wheelDelta / 120;
 				}
+
+				if (options instanceof Object) {
+
+					// Check that at least one element in options.target
+					// is target or target's ancestor
+					if (typeof options.target instanceof HTMLElement) {
+						var source = mxEvent.getSource(evt);
+						var pass = false;
+
+						while (source != null)
+						{
+							if (source == options.target)
+							{
+								pass = true;
+								break;
+							}
+							
+							source = source.parentNode;
+						}
+
+						if (!pass) {
+							return;
+						}
+					}
+
+					// Check filter
+					if (options.filter instanceof Function) {
+						if (!options.filter(evt, delta > 0)) {
+							return;
+						}
+					}
+					
+					// Prevent default
+					if (options.preventDefault) {
+						evt.preventDefault();
+					}
+					
+				}
+
+				// Apply delta to scroll buffer
+				scrollBuffer += delta;
 				
-				// Handles the event using the given function
-				if (delta != 0)
-				{
-					funct(evt, delta > 0);
+				// Handles the event using the given function after
+				// threshold of 0.5 is full in the scrolling buffer.
+				// This workaround adopts stepless scrolling that's
+				// present in some browsers when using trackpad or
+				// a mouse with stepless scroll wheel.
+				if (Math.abs(scrollBuffer) > 0.5) {
+					funct(evt, scrollBuffer > 0);
+					scrollBuffer = 0;
 				}
 			};
 	
