@@ -1865,6 +1865,7 @@ Sidebar.prototype.createThumb = function(cells, width, height, parent, title, sh
 Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, width, height, allowCellsInserted)
 {
 	var elt = document.createElement('a');
+	var cells = cells || []
 	elt.setAttribute('href', 'javascript:void(0);');
 	elt.className = 'geItem';
 	elt.style.overflow = 'hidden';
@@ -1886,8 +1887,8 @@ Sidebar.prototype.createItem = function(cells, title, showLabel, showTitle, widt
 
 	this.createThumb(cells, this.thumbWidth, this.thumbHeight, elt, title, showLabel, showTitle, width, height);
 	var bounds = new mxRectangle(0, 0, width, height);
-	
-	if (cells.length > 1 || cells[0].vertex)
+
+	if (cells.length > 1 ||  (cells[0] && cells[0].vertex))
 	{
 		var ds = this.createDragSource(elt, this.createDropHandler(cells, true, allowCellsInserted,
 			bounds), this.createDragPreview(width, height), cells, bounds);
