@@ -1566,7 +1566,8 @@ Graph.prototype.replacePlaceholders = function(cell, str)
 {
 	var result = [];
 	var last = 0;
-	
+	var match = [];
+
 	while (match = this.placeholderPattern.exec(str))
 	{
 		var val = match[0];
@@ -6020,7 +6021,7 @@ if (typeof mxVertexHandler != 'undefined')
 		{
 		    if (window.getSelection)
 		    {
-		        sel = window.getSelection();
+		        var sel = window.getSelection();
 		        
 		        if (sel.getRangeAt && sel.rangeCount)
 		        {
