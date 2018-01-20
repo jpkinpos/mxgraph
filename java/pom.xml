@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.jgraph</groupId>
+  <artifactId>mxgraph-all</artifactId>
+  <packaging>jar</packaging>
+  <version>3.7.4</version>
+   <properties>
+	<javaTarget>1.5</javaTarget>
+	<maven.compiler.target>${javaTarget}</maven.compiler.target>
+	<maven.compiler.source>${javaTarget}</maven.compiler.source>	
+ </properties>
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+	
+	  <dependency>
+      <groupId>mxPdf</groupId>
+      <artifactId>mxPdf</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+	   <systemPath>${basedir}/jars/mxPdf.jar</systemPath>
+    </dependency>
+	
+  </dependencies>
+  <build>
+	
+	<sourceDirectory>src</sourceDirectory>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+			</resource>
+		</resources>
+		<testSourceDirectory>test</testSourceDirectory>
+		<testResources>
+			<testResource>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+				<directory>test</directory>
+			</testResource>
+		</testResources>
+  </build>
+</project>
