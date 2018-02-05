@@ -1,31 +1,28 @@
-var mxgraph = require("../../../dist/build")({
-      mxImageBasePath: "../../src/images",
-      mxBasePath: "../../src"
-    }),
-    mxGraph = mxgraph.mxGraph,
-    mxShape = mxgraph.mxShape,
-    mxConnectionConstraint = mxgraph.mxConnectionConstraint,
-    mxPoint = mxgraph.mxPoint,
-    mxPolyline = mxgraph.mxPolyline,
-    mxEvent = mxgraph.mxEvent,
-    mxRubberband = mxgraph.mxRubberband,
-    mxCellState = mxgraph.mxCellState;
+const mxOptions = {
+  mxImageBasePath: "../../src/images",
+  mxBasePath: "../../src"
+};
 
-window.onload = function () {
+const mxGraph = require("../../../dist/mxGraph")(mxOptions),
+  mxShape = require("../../../dist/mxShape")(mxOptions),
+  mxConnectionConstraint = require("../../../dist/mxConnectionConstraint")(
+    mxOptions
+  ),
+  mxPoint = require("../../../dist/mxPoint")(mxOptions),
+  mxPolyline = require("../../../dist/mxPolyline")(mxOptions),
+  mxEvent = require("../../../dist/mxEvent")(mxOptions),
+  mxRubberband = require("../../../dist/mxRubberband")(mxOptions),
+  mxCellState = require("../../../dist/mxCellState")(mxOptions);
+
+window.onload = function() {
   // Overridden to define per-shape connection points
-  mxGraph.prototype.getAllConnectionConstraints = function(terminal, source)
-  {
-    if (terminal != null && terminal.shape != null)
-    {
-      if (terminal.shape.stencil != null)
-      {
-        if (terminal.shape.stencil != null)
-        {
+  mxGraph.prototype.getAllConnectionConstraints = function(terminal, source) {
+    if (terminal != null && terminal.shape != null) {
+      if (terminal.shape.stencil != null) {
+        if (terminal.shape.stencil != null) {
           return terminal.shape.stencil.constraints;
         }
-      }
-      else if (terminal.shape.constraints != null)
-      {
+      } else if (terminal.shape.constraints != null) {
         return terminal.shape.constraints;
       }
     }
@@ -34,18 +31,20 @@ window.onload = function () {
   };
 
   // Defines the default constraints for all shapes
-  mxShape.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.25, 0), true),
-                   new mxConnectionConstraint(new mxPoint(0.5, 0), true),
-                   new mxConnectionConstraint(new mxPoint(0.75, 0), true),
-                               new mxConnectionConstraint(new mxPoint(0, 0.25), true),
-                               new mxConnectionConstraint(new mxPoint(0, 0.5), true),
-                               new mxConnectionConstraint(new mxPoint(0, 0.75), true),
-                             new mxConnectionConstraint(new mxPoint(1, 0.25), true),
-                             new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-                             new mxConnectionConstraint(new mxPoint(1, 0.75), true),
-                             new mxConnectionConstraint(new mxPoint(0.25, 1), true),
-                             new mxConnectionConstraint(new mxPoint(0.5, 1), true),
-                             new mxConnectionConstraint(new mxPoint(0.75, 1), true)];
+  mxShape.prototype.constraints = [
+    new mxConnectionConstraint(new mxPoint(0.25, 0), true),
+    new mxConnectionConstraint(new mxPoint(0.5, 0), true),
+    new mxConnectionConstraint(new mxPoint(0.75, 0), true),
+    new mxConnectionConstraint(new mxPoint(0, 0.25), true),
+    new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+    new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+    new mxConnectionConstraint(new mxPoint(1, 0.25), true),
+    new mxConnectionConstraint(new mxPoint(1, 0.5), true),
+    new mxConnectionConstraint(new mxPoint(1, 0.75), true),
+    new mxConnectionConstraint(new mxPoint(0.25, 1), true),
+    new mxConnectionConstraint(new mxPoint(0.5, 1), true),
+    new mxConnectionConstraint(new mxPoint(0.75, 1), true)
+  ];
 
   // Edges have no connection points
   mxPolyline.prototype.constraints = null;
@@ -53,47 +52,44 @@ window.onload = function () {
   // Program starts here. Creates a sample graph in the
   // DOM node with the specified ID. This function is invoked
   // from the onLoad event handler of the document (see below).
-  function main(container)
-  {
+  function main(container) {
     // Disables the built-in context menu
     mxEvent.disableContextMenu(container);
 
     // Creates the graph inside the given container
-    var graph = new mxGraph(container);
+    const graph = new mxGraph(container);
     graph.setConnectable(true);
 
     // Enables connect preview for the default edge style
-    graph.connectionHandler.createEdgeState = function(me)
-    {
-      var edge = graph.createEdge(null, null, null, null, null);
+    graph.connectionHandler.createEdgeState = function(me) {
+      const edge = graph.createEdge(null, null, null, null, null);
 
       return new mxCellState(this.graph.view, edge, this.graph.getCellStyle(edge));
     };
 
     // Specifies the default edge style
-    graph.getStylesheet().getDefaultEdgeStyle()['edgeStyle'] = 'orthogonalEdgeStyle';
+    graph.getStylesheet().getDefaultEdgeStyle()["edgeStyle"] = "orthogonalEdgeStyle";
 
     // Enables rubberband selection
     new mxRubberband(graph);
 
     // Gets the default parent for inserting new cells. This
     // is normally the first child of the root (ie. layer 0).
-    var parent = graph.getDefaultParent();
+    const parent = graph.getDefaultParent();
 
     // Adds cells to the model in a single step
     graph.getModel().beginUpdate();
-    try
-    {
-      var v1 = graph.insertVertex(parent, null, 'Hello,', 20, 20, 80, 30);
-      var v2 = graph.insertVertex(parent, null, 'World!', 200, 150, 80, 30);
-      var e1 = graph.insertEdge(parent, null, '', v1, v2);
+
+    try {
+      const v1 = graph.insertVertex(parent, null, "Hello,", 20, 20, 80, 30);
+      const v2 = graph.insertVertex(parent, null, "World!", 200, 150, 80, 30);
+      const e1 = graph.insertEdge(parent, null, "", v1, v2);
     }
-    finally
-    {
+    finally {
       // Updates the display
       graph.getModel().endUpdate();
     }
-  };
+  }
 
-  main(document.getElementById('graphContainer'));
+  main(document.getElementById("graphContainer"));
 };
