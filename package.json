@@ -19,11 +19,13 @@
   "scripts": {
     "prepublish": "grunt build --base ./ --gruntfile etc/build/Gruntfile.js"
   },
-  "dependencies": {
+  "devDependencies": {
+    "decomment": "^0.9.1",
     "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.1.0",
     "grunt-contrib-concat": "^1.0.1",
     "grunt-contrib-copy": "^1.0.0",
-    "grunt-webpack": "^2.0.1",
+    "grunt-webpack": "^3.0.2",
     "load-grunt-parent-tasks": "^0.1.1",
     "load-grunt-tasks": "^3.5.2",
     "webpack": "^2.2.1"
