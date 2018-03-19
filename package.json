@@ -17,7 +17,8 @@
   },
   "main": "./javascript/dist/build.js",
   "scripts": {
-    "prepare": "grunt build --base ./ --gruntfile etc/build/Gruntfile.js"
+    "prepublishOnly": "grunt build --base ./ --gruntfile etc/build/Gruntfile.js",
+    "prepublish": "npm run prepublishOnly"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
