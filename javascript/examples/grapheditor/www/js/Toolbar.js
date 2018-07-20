@@ -663,6 +663,18 @@ Toolbar.prototype.addMenu = function(label, tooltip, showLabels, name, c, showAl
 		menu.funct.apply(menu, arguments);
 	}, c, showAll);
 	
+	if (menu.eventListeners != null) {
+      		var i = 0;
+
+      		while (i < menu.eventListeners.length) {
+        		if (menu.eventListeners[i + 1]) {
+                    	menu.eventListeners.splice(i, 2);
+        		} else {
+          		i += 2;
+        		}
+      		}
+    	}
+	
 	menu.addListener('stateChanged', function()
 	{
 		elt.setEnabled(menu.enabled);
