@@ -240,9 +240,21 @@ public class mxRectangle extends mxPoint
 
 		return new Rectangle(ix, iy, iw, ih);
 	}
+	
+	/**
+	 * Rotates this rectangle by 90 degree around its center point.
+	 */
+	public void rotate90()
+	{
+		double t = (this.width - this.height) / 2;
+		this.x += t;
+		this.y -= t;
+		double tmp = this.width;
+		this.width = this.height;
+		this.height = tmp;
+	};
 
 	/**
-	 * 
 	 * Returns true if the given object equals this rectangle.
 	 */
 	public boolean equals(Object obj)
@@ -278,9 +290,23 @@ public class mxRectangle extends mxPoint
 	 * @return a <code>String</code> representing this
 	 * <code>mxRectangle</code>.
 	 */
+	@Override
 	public String toString()
 	{
-		return getClass().getName() + "[x=" + x + ",y=" + y + ",w=" + width
-				+ ",h=" + height + "]";
+		StringBuilder builder = new StringBuilder(32);
+		builder.append(getClass().getSimpleName());
+		builder.append(" [");
+		builder.append("x=");
+		builder.append(x);
+		builder.append(", y=");
+		builder.append(y);
+		builder.append(", width=");
+		builder.append(width);
+		builder.append(", height=");
+		builder.append(height);
+		builder.append("]");
+		
+		return builder.toString();
 	}
+
 }

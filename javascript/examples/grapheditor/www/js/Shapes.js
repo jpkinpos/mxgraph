@@ -52,7 +52,7 @@
 		return null;
 	};
 	
-	mxCellRenderer.prototype.defaultShapes['cube'] = CubeShape;
+	mxCellRenderer.registerShape('cube', CubeShape);
 	
 	var tan30 = Math.tan(mxUtils.toRadians(30));
 	var tan30Dx = (0.5 - tan30) / 2;
@@ -78,7 +78,7 @@
 		path.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['isoRectangle'] = IsoRectangleShape;
+	mxCellRenderer.registerShape('isoRectangle', IsoRectangleShape);
 
 	// Cube Shape, supports size style
 	function IsoCubeShape()
@@ -114,7 +114,7 @@
 		}
 	};
 
-	mxCellRenderer.prototype.defaultShapes['isoCube'] = IsoCubeShape;
+	mxCellRenderer.registerShape('isoCube', IsoCubeShape);
 	
 	// DataStore Shape, supports size style
 	function DataStoreShape()
@@ -179,7 +179,7 @@
 			this.strokewidth - 1) * this.scale, 0, 0);
 	}
 
-	mxCellRenderer.prototype.defaultShapes['datastore'] = DataStoreShape;
+	mxCellRenderer.registerShape('datastore', DataStoreShape);
 
 	// Note Shape, supports size style
 	function NoteShape()
@@ -212,7 +212,7 @@
 		}
 	};
 
-	mxCellRenderer.prototype.defaultShapes['note'] = NoteShape;
+	mxCellRenderer.registerShape('note', NoteShape);
 
 	// Note Shape, supports size style
 	function SwitchShape()
@@ -231,7 +231,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['switch'] = SwitchShape;
+	mxCellRenderer.registerShape('switch', SwitchShape);
 
 	// Folder Shape, supports tabWidth, tabHeight styles
 	function FolderShape()
@@ -290,7 +290,7 @@
 		}
 	};
 
-	mxCellRenderer.prototype.defaultShapes['folder'] = FolderShape;
+	mxCellRenderer.registerShape('folder', FolderShape);
 
 	// Card shape
 	function CardShape()
@@ -308,7 +308,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['card'] = CardShape;
+	mxCellRenderer.registerShape('card', CardShape);
 
 	// Tape shape
 	function TapeShape()
@@ -360,7 +360,7 @@
 		return rect;
 	};
 	
-	mxCellRenderer.prototype.defaultShapes['tape'] = TapeShape;
+	mxCellRenderer.registerShape('tape', TapeShape);
 
 	// Document shape
 	function DocumentShape()
@@ -394,13 +394,31 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['document'] = DocumentShape;
+	mxCellRenderer.registerShape('document', DocumentShape);
+
+	var cylinderGetCylinderSize = mxCylinder.prototype.getCylinderSize;
+	
+	mxCylinder.prototype.getCylinderSize = function(x, y, w, h)
+	{
+		var size = mxUtils.getValue(this.style, 'size');
+		
+		if (size != null)
+		{
+			return h * Math.max(0, Math.min(1, size));
+		}
+		else
+		{
+			return cylinderGetCylinderSize.apply(this, arguments);
+		}
+	};
 	
 	mxCylinder.prototype.getLabelMargins = function(rect)
 	{
 		if (mxUtils.getValue(this.style, 'boundedLbl', false))
 		{
-			return new mxRectangle(0, Math.min(this.maxHeight * this.scale, rect.height * 0.3), 0, 0);
+			var size = mxUtils.getValue(this.style, 'size', 0.15) * 2;
+			
+			return new mxRectangle(0, Math.min(this.maxHeight * this.scale, rect.height * size), 0, 0);
 		}
 		
 		return null;
@@ -422,7 +440,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['parallelogram'] = ParallelogramShape;
+	mxCellRenderer.registerShape('parallelogram', ParallelogramShape);
 
 	// Trapezoid shape
 	function TrapezoidShape()
@@ -439,7 +457,7 @@
 				this.isRounded, arcSize, true);
 	};
 
-	mxCellRenderer.prototype.defaultShapes['trapezoid'] = TrapezoidShape;
+	mxCellRenderer.registerShape('trapezoid', TrapezoidShape);
 
 	// Curly Bracket shape
 	function CurlyBracketShape()
@@ -459,7 +477,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['curlyBracket'] = CurlyBracketShape;
+	mxCellRenderer.registerShape('curlyBracket', CurlyBracketShape);
 
 	// Parallel marker shape
 	function ParallelMarkerShape()
@@ -480,7 +498,7 @@
 		c.fillAndStroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['parallelMarker'] = ParallelMarkerShape;
+	mxCellRenderer.registerShape('parallelMarker', ParallelMarkerShape);
 
 	/**
 	 * Adds handJiggle style (jiggle=n sets jiggle)
@@ -773,8 +791,8 @@
 				inset = Math.max(inset, Math.min(w * f, h * f));
 			}
 			
-			r.x += inset;
-			r.width -= 2 * inset;
+			r.x += Math.round(inset);
+			r.width -= Math.round(2 * inset);
 			
 			return r;
 		}
@@ -792,6 +810,9 @@
 			inset = Math.max(inset, Math.min(w * f, h * f));
 		}
 		
+		// Crisp rendering of inner lines
+		inset = Math.round(inset);
+		
 		c.begin();
 		c.moveTo(x + inset, y);
 		c.lineTo(x + inset, y + h);
@@ -802,7 +823,23 @@
 		mxRectangleShape.prototype.paintForeground.apply(this, arguments);
 	};
 
-	mxCellRenderer.prototype.defaultShapes['process'] = ProcessShape;
+	mxCellRenderer.registerShape('process', ProcessShape);
+	
+	// Transparent Shape
+	function TransparentShape()
+	{
+		mxRectangleShape.call(this);
+	};
+	mxUtils.extend(TransparentShape, mxRectangleShape);
+	TransparentShape.prototype.paintBackground = function(c, x, y, w, h)
+	{
+		c.setFillColor(mxConstants.NONE);
+		c.rect(x, y, w, h);
+		c.fill();
+	};
+	TransparentShape.prototype.paintForeground = function(c, x, y, w, h) 	{ };
+
+	mxCellRenderer.registerShape('transparent', TransparentShape);
 
 	// Callout shape
 	function CalloutShape()
@@ -833,7 +870,7 @@
 			this.isRounded, arcSize, true, [4]);
 	};
 
-	mxCellRenderer.prototype.defaultShapes['callout'] = CalloutShape;
+	mxCellRenderer.registerShape('callout', CalloutShape);
 
 	// Step shape
 	function StepShape()
@@ -842,16 +879,19 @@
 	};
 	mxUtils.extend(StepShape, mxActor);
 	StepShape.prototype.size = 0.2;
+	StepShape.prototype.fixedSize = 20;
 	StepShape.prototype.redrawPath = function(c, x, y, w, h)
 	{
-		var s =  w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
+		var fixed = mxUtils.getValue(this.style, 'fixedSize', '0') != '0';
+		var s = (fixed) ? Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'size', this.fixedSize)))) :
+			w * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'size', this.size))));
 		var arcSize = mxUtils.getValue(this.style, mxConstants.STYLE_ARCSIZE, mxConstants.LINE_ARCSIZE) / 2;
 		this.addPoints(c, [new mxPoint(0, 0), new mxPoint(w - s, 0), new mxPoint(w, h / 2), new mxPoint(w - s, h),
 		                   new mxPoint(0, h), new mxPoint(s, h / 2)], this.isRounded, arcSize, true);
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['step'] = StepShape;
+	mxCellRenderer.registerShape('step', StepShape);
 
 	// Hexagon shape
 	function HexagonShape()
@@ -868,7 +908,7 @@
 		                   new mxPoint(s, h), new mxPoint(0, 0.5 * h)], this.isRounded, arcSize, true);
 	};
 
-	mxCellRenderer.prototype.defaultShapes['hexagon'] = HexagonShape;
+	mxCellRenderer.registerShape('hexagon', HexagonShape);
 
 	// Plus Shape
 	function PlusShape()
@@ -894,7 +934,7 @@
 		mxRectangleShape.prototype.paintForeground.apply(this, arguments);
 	};
 
-	mxCellRenderer.prototype.defaultShapes['plus'] = PlusShape;
+	mxCellRenderer.registerShape('plus', PlusShape);
 	
 	// Overrides painting of rhombus shape to allow for double style
 	var mxRhombusPaintVertexShape = mxRhombus.prototype.paintVertexShape;
@@ -987,7 +1027,7 @@
 			
 			do
 			{
-				shape = mxCellRenderer.prototype.defaultShapes[this.style['symbol' + counter]];
+				shape = mxCellRenderer.defaultShapes[this.style['symbol' + counter]];
 				
 				if (shape != null)
 				{
@@ -1054,7 +1094,7 @@
 		mxRectangleShape.prototype.paintForeground.apply(this, arguments);
 	};
 
-	mxCellRenderer.prototype.defaultShapes['ext'] = ExtendedShape;
+	mxCellRenderer.registerShape('ext', ExtendedShape);
 	
 	// Tape Shape, supports size style
 	function MessageShape()
@@ -1081,7 +1121,7 @@
 		}
 	};
 
-	mxCellRenderer.prototype.defaultShapes['message'] = MessageShape;
+	mxCellRenderer.registerShape('message', MessageShape);
 	
 	// UML Actor Shape
 	function UmlActorShape()
@@ -1118,7 +1158,7 @@
 	};
 
 	// Replaces existing actor shape
-	mxCellRenderer.prototype.defaultShapes['umlActor'] = UmlActorShape;
+	mxCellRenderer.registerShape('umlActor', UmlActorShape);
 	
 	// UML Boundary Shape
 	function UmlBoundaryShape()
@@ -1154,7 +1194,7 @@
 	};
 
 	// Replaces existing actor shape
-	mxCellRenderer.prototype.defaultShapes['umlBoundary'] = UmlBoundaryShape;
+	mxCellRenderer.registerShape('umlBoundary', UmlBoundaryShape);
 
 	// UML Entity Shape
 	function UmlEntityShape()
@@ -1173,7 +1213,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['umlEntity'] = UmlEntityShape;
+	mxCellRenderer.registerShape('umlEntity', UmlEntityShape);
 
 	// UML Destroy Shape
 	function UmlDestroyShape()
@@ -1194,7 +1234,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['umlDestroy'] = UmlDestroyShape;
+	mxCellRenderer.registerShape('umlDestroy', UmlDestroyShape);
 	
 	// UML Control Shape
 	function UmlControlShape()
@@ -1232,7 +1272,7 @@
 	};
 
 	// Replaces existing actor shape
-	mxCellRenderer.prototype.defaultShapes['umlControl'] = UmlControlShape;
+	mxCellRenderer.registerShape('umlControl', UmlControlShape);
 
 	// UML Lifeline Shape
 	function UmlLifeline()
@@ -1291,7 +1331,7 @@
 		mxRectangleShape.prototype.paintForeground.call(this, c, x, y, w, Math.min(h, size));
 	};
 
-	mxCellRenderer.prototype.defaultShapes['umlLifeline'] = UmlLifeline;
+	mxCellRenderer.registerShape('umlLifeline', UmlLifeline);
 	
 	// UML Frame Shape
 	function UmlFrame()
@@ -1313,6 +1353,24 @@
 		var co = this.corner;
 		var w0 = Math.min(w, Math.max(co, parseFloat(mxUtils.getValue(this.style, 'width', this.width))));
 		var h0 = Math.min(h, Math.max(co * 1.5, parseFloat(mxUtils.getValue(this.style, 'height', this.height))));
+		var bg = mxUtils.getValue(this.style, mxConstants.STYLE_SWIMLANE_FILLCOLOR, mxConstants.NONE);
+		
+		if (bg != mxConstants.NONE)
+		{
+			c.setFillColor(bg);
+			c.rect(x, y, w, h);
+			c.fill();
+		}
+		
+		if (this.fill != null && this.fill != mxConstants.NONE && this.gradient && this.gradient != mxConstants.NONE)
+		{
+			var b = this.getGradientBounds(c, x, y, w, h);
+			c.setGradient(this.fill, this.gradient, x, y, w, h, this.gradientDirection);
+		}
+		else
+		{
+			c.setFillColor(this.fill);
+		}
 
 		c.begin();
 		c.moveTo(x, y);
@@ -1332,7 +1390,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['umlFrame'] = UmlFrame;
+	mxCellRenderer.registerShape('umlFrame', UmlFrame);
 	
 	mxPerimeter.LifelinePerimeter = function (bounds, vertex, next, orthogonal)
 	{
@@ -1540,7 +1598,8 @@
 	// Step Perimeter
 	mxPerimeter.StepPerimeter = function (bounds, vertex, next, orthogonal)
 	{
-		var size = StepShape.prototype.size;
+		var fixed = mxUtils.getValue(vertex.style, 'fixedSize', '0') != '0';
+		var size = (fixed) ? StepShape.prototype.fixedSize : StepShape.prototype.size;
 		
 		if (vertex != null)
 		{
@@ -1562,28 +1621,28 @@
 		
 		if (direction == mxConstants.DIRECTION_EAST)
 		{
-			var dx = w * Math.max(0, Math.min(1, size));
+			var dx = (fixed) ? Math.max(0, Math.min(w, size)) : w * Math.max(0, Math.min(1, size));
 			points = [new mxPoint(x, y), new mxPoint(x + w - dx, y), new mxPoint(x + w, cy),
 							new mxPoint(x + w - dx, y + h), new mxPoint(x, y + h),
 							new mxPoint(x + dx, cy), new mxPoint(x, y)];
 		}
 		else if (direction == mxConstants.DIRECTION_WEST)
 		{
-			var dx = w * Math.max(0, Math.min(1, size));
+			var dx = (fixed) ? Math.max(0, Math.min(w, size)) : w * Math.max(0, Math.min(1, size));
 			points = [new mxPoint(x + dx, y), new mxPoint(x + w, y), new mxPoint(x + w - dx, cy),
 							new mxPoint(x + w, y + h), new mxPoint(x + dx, y + h),
 							new mxPoint(x, cy), new mxPoint(x + dx, y)];
 		}
 		else if (direction == mxConstants.DIRECTION_NORTH)
 		{
-			var dy = h * Math.max(0, Math.min(1, size));
+			var dy = (fixed) ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
 			points = [new mxPoint(x, y + dy), new mxPoint(cx, y), new mxPoint(x + w, y + dy),
 							new mxPoint(x + w, y + h), new mxPoint(cx, y + h - dy),
 							new mxPoint(x, y + h), new mxPoint(x, y + dy)];
 		}
 		else
 		{
-			var dy = h * Math.max(0, Math.min(1, size));
+			var dy = (fixed) ? Math.max(0, Math.min(h, size)) : h * Math.max(0, Math.min(1, size));
 			points = [new mxPoint(x, y), new mxPoint(cx, y + dy), new mxPoint(x + w, y),
 							new mxPoint(x + w, y + h - dy), new mxPoint(cx, y + h),
 							new mxPoint(x, y + h - dy), new mxPoint(x, y)];
@@ -1689,7 +1748,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['lollipop'] = LollipopShape;
+	mxCellRenderer.registerShape('lollipop', LollipopShape);
 
 	// Lollipop Shape
 	function RequiresShape()
@@ -1719,7 +1778,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['requires'] = RequiresShape;
+	mxCellRenderer.registerShape('requires', RequiresShape);
 	
 	// Component shape
 	function ComponentShape()
@@ -1769,7 +1828,7 @@
 		}
 	};
 
-	mxCellRenderer.prototype.defaultShapes['component'] = ComponentShape;
+	mxCellRenderer.registerShape('component', ComponentShape);
 	
 	// State Shapes derives from double ellipse
 	function StateShape()
@@ -1797,7 +1856,7 @@
 		}
 	};
 
-	mxCellRenderer.prototype.defaultShapes['endState'] = StateShape;
+	mxCellRenderer.registerShape('endState', StateShape);
 
 	function StartStateShape()
 	{
@@ -1806,7 +1865,7 @@
 	mxUtils.extend(StartStateShape, StateShape);
 	StartStateShape.prototype.outerStroke = false;
 	
-	mxCellRenderer.prototype.defaultShapes['startState'] = StartStateShape;
+	mxCellRenderer.registerShape('startState', StartStateShape);
 
 	// Link shape
 	function LinkShape()
@@ -1833,7 +1892,7 @@
 	};
 
 	// Registers the link shape
-	mxCellRenderer.prototype.defaultShapes['link'] = LinkShape;
+	mxCellRenderer.registerShape('link', LinkShape);
 
 	// Generic arrow
 	function FlexArrowShape()
@@ -1861,7 +1920,7 @@
 	};
 	
 	// Registers the link shape
-	mxCellRenderer.prototype.defaultShapes['flexArrow'] = FlexArrowShape;
+	mxCellRenderer.registerShape('flexArrow', FlexArrowShape);
 	
 	// Manual Input shape
 	function ManualInputShape()
@@ -1879,7 +1938,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['manualInput'] = ManualInputShape;
+	mxCellRenderer.registerShape('manualInput', ManualInputShape);
 
 	// Internal storage
 	function InternalStorageShape()
@@ -1921,7 +1980,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['internalStorage'] = InternalStorageShape;
+	mxCellRenderer.registerShape('internalStorage', InternalStorageShape);
 
 	// Internal storage
 	function CornerShape()
@@ -1945,7 +2004,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['corner'] = CornerShape;
+	mxCellRenderer.registerShape('corner', CornerShape);
 
 	// Crossbar shape
 	function CrossbarShape()
@@ -1969,7 +2028,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['crossbar'] = CrossbarShape;
+	mxCellRenderer.registerShape('crossbar', CrossbarShape);
 
 	// Internal storage
 	function TeeShape()
@@ -1995,7 +2054,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['tee'] = TeeShape;
+	mxCellRenderer.registerShape('tee', TeeShape);
 
 	// Arrow
 	function SingleArrowShape()
@@ -2019,7 +2078,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['singleArrow'] = SingleArrowShape;
+	mxCellRenderer.registerShape('singleArrow', SingleArrowShape);
 
 	// Arrow
 	function DoubleArrowShape()
@@ -2042,7 +2101,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['doubleArrow'] = DoubleArrowShape;
+	mxCellRenderer.registerShape('doubleArrow', DoubleArrowShape);
 
 	// Data storage
 	function DataStorageShape()
@@ -2064,7 +2123,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['dataStorage'] = DataStorageShape;
+	mxCellRenderer.registerShape('dataStorage', DataStorageShape);
 
 	// Or
 	function OrShape()
@@ -2081,7 +2140,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['or'] = OrShape;
+	mxCellRenderer.registerShape('or', OrShape);
 
 	// Xor
 	function XorShape()
@@ -2099,7 +2158,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['xor'] = XorShape;
+	mxCellRenderer.registerShape('xor', XorShape);
 
 	// Loop limit
 	function LoopLimitShape()
@@ -2117,7 +2176,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['loopLimit'] = LoopLimitShape;
+	mxCellRenderer.registerShape('loopLimit', LoopLimitShape);
 
 	// Off page connector
 	function OffPageConnectorShape()
@@ -2135,7 +2194,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['offPageConnector'] = OffPageConnectorShape;
+	mxCellRenderer.registerShape('offPageConnector', OffPageConnectorShape);
 
 	// Internal storage
 	function TapeDataShape()
@@ -2154,7 +2213,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['tapeData'] = TapeDataShape;
+	mxCellRenderer.registerShape('tapeData', TapeDataShape);
 
 	// OrEllipseShape
 	function OrEllipseShape()
@@ -2180,7 +2239,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['orEllipse'] = OrEllipseShape;
+	mxCellRenderer.registerShape('orEllipse', OrEllipseShape);
 
 	// SumEllipseShape
 	function SumEllipseShape()
@@ -2207,7 +2266,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['sumEllipse'] = SumEllipseShape;
+	mxCellRenderer.registerShape('sumEllipse', SumEllipseShape);
 
 	// SortShape
 	function SortShape()
@@ -2227,7 +2286,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['sortShape'] = SortShape;
+	mxCellRenderer.registerShape('sortShape', SortShape);
 
 	// CollateShape
 	function CollateShape()
@@ -2252,7 +2311,7 @@
 		c.fillAndStroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['collate'] = CollateShape;
+	mxCellRenderer.registerShape('collate', CollateShape);
 
 	// DimensionShape
 	function DimensionShape()
@@ -2287,7 +2346,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['dimension'] = DimensionShape;
+	mxCellRenderer.registerShape('dimension', DimensionShape);
 
 	// PartialRectangleShape
 	function PartialRectangleShape()
@@ -2309,46 +2368,48 @@
 			c.setStrokeColor(this.stroke);
 			c.rect(x, y, w, h);
 			c.fill();
+
+			c.begin();
+			c.moveTo(x, y);
 			
 			if (mxUtils.getValue(this.style, 'top', '1') == '1')
 			{
-				c.begin();
-				c.moveTo(x, y);
 				c.lineTo(x + w, y);
-				c.end();
-				c.stroke();
+			}
+			else
+			{
+				c.moveTo(x + w, y);
 			}
 			
 			if (mxUtils.getValue(this.style, 'right', '1') == '1')
 			{
-				c.begin();
-				c.moveTo(x + w, y);
 				c.lineTo(x + w, y + h);
-				c.end();
-				c.stroke();
+			}
+			else
+			{
+				c.moveTo(x + w, y + h);
 			}
 			
 			if (mxUtils.getValue(this.style, 'bottom', '1') == '1')
 			{
-				c.begin();
-				c.moveTo(x + w, y + h);
 				c.lineTo(x, y + h);
-				c.end();
-				c.stroke();
+			}
+			else
+			{
+				c.moveTo(x, y + h);
 			}
 			
 			if (mxUtils.getValue(this.style, 'left', '1') == '1')
 			{
-				c.begin();
-				c.moveTo(x, y + h);
-				c.lineTo(x, y);
-				c.end();
-				c.stroke();
+				c.lineTo(x, y - this.strokewidth / 2);
 			}
+						
+			c.end();
+			c.stroke();
 		}
 	};
 
-	mxCellRenderer.prototype.defaultShapes['partialRectangle'] = PartialRectangleShape;
+	mxCellRenderer.registerShape('partialRectangle', PartialRectangleShape);
 
 	// LineEllipseShape
 	function LineEllipseShape()
@@ -2378,7 +2439,7 @@
 		c.stroke();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['lineEllipse'] = LineEllipseShape;
+	mxCellRenderer.registerShape('lineEllipse', LineEllipseShape);
 
 	// Delay
 	function DelayShape()
@@ -2398,7 +2459,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['delay'] = DelayShape;
+	mxCellRenderer.registerShape('delay', DelayShape);
 
 	// Cross Shape
 	function CrossShape()
@@ -2432,7 +2493,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['cross'] = CrossShape;
+	mxCellRenderer.registerShape('cross', CrossShape);
 
 	// Display
 	function DisplayShape()
@@ -2456,7 +2517,7 @@
 		c.end();
 	};
 
-	mxCellRenderer.prototype.defaultShapes['display'] = DisplayShape;
+	mxCellRenderer.registerShape('display', DisplayShape);
 	
 	// FilledEdge shape
 	function FilledEdge()
@@ -2468,11 +2529,19 @@
 	FilledEdge.prototype.origPaintEdgeShape = FilledEdge.prototype.paintEdgeShape;
 	FilledEdge.prototype.paintEdgeShape = function(c, pts, rounded)
 	{
-		//paintEdgeShape reset dashed to false
-		var dashed = c.state.dashed;
-		var fixDash = c.state.fixDash; 
+		// Markers modify incoming points array
+		var temp = [];
 		
-		FilledEdge.prototype.origPaintEdgeShape.apply(this, arguments);
+		for (var i = 0; i < pts.length; i++)
+		{
+			temp.push(mxUtils.clone(pts[i]));
+		}
+		
+		// paintEdgeShape resets dashed to false
+		var dashed = c.state.dashed;
+		var fixDash = c.state.fixDash;
+		FilledEdge.prototype.origPaintEdgeShape.apply(this, [c, temp, rounded]);
+
 		if (c.state.strokeWidth >= 3)
 		{
 			var fillClr = mxUtils.getValue(this.style, 'fillColor', null);
@@ -2482,15 +2551,36 @@
 				c.setStrokeColor(fillClr);
 				c.setStrokeWidth(c.state.strokeWidth - 2);
 				c.setDashed(dashed, fixDash);
-			
-				FilledEdge.prototype.origPaintEdgeShape.apply(this, arguments);		
+				
+				FilledEdge.prototype.origPaintEdgeShape.apply(this, [c, pts, rounded]);
 			}
 		}
 	};
 
 	// Registers the link shape
-	mxCellRenderer.prototype.defaultShapes['filledEdge'] = FilledEdge;
+	mxCellRenderer.registerShape('filledEdge', FilledEdge);
 
+	// Implements custom colors for shapes
+	if (typeof StyleFormatPanel !== 'undefined')
+	{
+		(function()
+		{
+			var styleFormatPanelGetCustomColors = StyleFormatPanel.prototype.getCustomColors;
+			
+			StyleFormatPanel.prototype.getCustomColors = function()
+			{
+				var ss = this.format.getSelectionState();
+				var result = styleFormatPanelGetCustomColors.apply(this, arguments);
+				
+				if (ss.style.shape == 'umlFrame')
+				{
+					result.push({title: mxResources.get('laneColor'), key: 'swimlaneFillColor', defaultValue: '#ffffff'});
+				}
+				
+				return result;
+			};
+		})();
+	}
 	
 	// Registers and defines the custom marker
 	mxMarker.addMarker('dash', function(c, shape, type, pe, unitX, unitY, size, source, sw, filled)
@@ -2807,7 +2897,7 @@
 			};
 		};
 		
-		function createDisplayHandleFunction(defaultValue, allowArcHandle, max, redrawEdges)
+		function createDisplayHandleFunction(defaultValue, allowArcHandle, max, redrawEdges, fixedDefaultValue)
 		{
 			max = (max != null) ? max : 1;
 			
@@ -2815,12 +2905,21 @@
 			{
 				var handles = [createHandle(state, ['size'], function(bounds)
 				{
-					var size = parseFloat(mxUtils.getValue(this.state.style, 'size', defaultValue));
+					var fixed = (fixedDefaultValue != null) ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0' : null;
+					var size = parseFloat(mxUtils.getValue(this.state.style, 'size', (fixed) ? fixedDefaultValue : defaultValue));
 	
-					return new mxPoint(bounds.x + size * bounds.width, bounds.getCenterY());
-				}, function(bounds, pt)
+					return new mxPoint(bounds.x + Math.max(0, Math.min(bounds.width, size * ((fixed) ? 1 : bounds.width))), bounds.getCenterY());
+				}, function(bounds, pt, me)
 				{
-					this.state.style['size'] = Math.max(0, Math.min(max, (pt.x - bounds.x) / bounds.width));
+					var fixed = (fixedDefaultValue != null) ? mxUtils.getValue(this.state.style, 'fixedSize', '0') != '0' : null;
+					var size = (fixed) ? (pt.x - bounds.x) : Math.max(0, Math.min(max, (pt.x - bounds.x) / bounds.width));
+					
+					if (fixed && !mxEvent.isAltDown(me.getEvent()))
+					{
+						size = state.view.graph.snap(size);
+					}
+					
+					this.state.style['size'] = size;
 				}, null, redrawEdges)];
 				
 				if (allowArcHandle && mxUtils.getValue(state.style, mxConstants.STYLE_ROUNDED, false))
@@ -2877,26 +2976,37 @@
 		
 		function createEdgeHandle(state, keys, start, getPosition, setPosition)
 		{
-			var pts = state.absolutePoints;
-			var n = pts.length - 1;
-			
-			var tr = state.view.translate;
-			var s = state.view.scale;
-			
-			var p0 = (start) ? pts[0] : pts[n];
-			var p1 = (start) ? pts[1] : pts[n - 1];
-			var dx = (start) ? p1.x - p0.x : p1.x - p0.x;
-			var dy = (start) ? p1.y - p0.y : p1.y - p0.y;
-
-			var dist = Math.sqrt(dx * dx + dy * dy);
-			
 			return createHandle(state, keys, function(bounds)
 			{
+				var pts = state.absolutePoints;
+				var n = pts.length - 1;
+				
+				var tr = state.view.translate;
+				var s = state.view.scale;
+				
+				var p0 = (start) ? pts[0] : pts[n];
+				var p1 = (start) ? pts[1] : pts[n - 1];
+				var dx = (start) ? p1.x - p0.x : p1.x - p0.x;
+				var dy = (start) ? p1.y - p0.y : p1.y - p0.y;
+
+				var dist = Math.sqrt(dx * dx + dy * dy);
+				
 				var pt = getPosition.call(this, dist, dx / dist, dy / dist, p0, p1);
 				
 				return new mxPoint(pt.x / s - tr.x, pt.y / s - tr.y);
 			}, function(bounds, pt, me)
 			{
+				var pts = state.absolutePoints;
+				var n = pts.length - 1;
+				
+				var tr = state.view.translate;
+				var s = state.view.scale;
+				
+				var p0 = (start) ? pts[0] : pts[n];
+				var p1 = (start) ? pts[1] : pts[n - 1];
+				var dx = (start) ? p1.x - p0.x : p1.x - p0.x;
+				var dy = (start) ? p1.y - p0.y : p1.y - p0.y;
+
 				var dist = Math.sqrt(dx * dx + dy * dy);
 				pt.x = (pt.x + tr.x) * s;
 				pt.y = (pt.y + tr.y) * s;
@@ -3379,7 +3489,7 @@
 					this.state.style['size'] = Math.max(0, Math.min(1, (bounds.y + bounds.height - pt.y) / bounds.height));
 				})];
 			},
-			'step': createDisplayHandleFunction(StepShape.prototype.size, true, null, true),
+			'step': createDisplayHandleFunction(StepShape.prototype.size, true, null, true, StepShape.prototype.fixedSize),
 			'hexagon': createDisplayHandleFunction(HexagonShape.prototype.size, true, 0.5, true),
 			'curlyBracket': createDisplayHandleFunction(CurlyBracketShape.prototype.size, false),
 			'display': createDisplayHandleFunction(DisplayShape.prototype.size, false),
@@ -3405,13 +3515,18 @@
 				{
 					var name = this.state.style['shape'];
 
-					if (this.state.view.graph.cellRenderer.defaultShapes[name] == null &&
+					if (mxCellRenderer.defaultShapes[name] == null &&
 						mxStencilRegistry.getStencil(name) == null)
 					{
 						name = mxConstants.SHAPE_RECTANGLE;
 					}
 					
 					var fn = handleFactory[name];
+					
+					if (fn == null && this.state.shape != null && this.state.shape.isRoundable())
+					{
+						fn = handleFactory[mxConstants.SHAPE_RECTANGLE];
+					}
 				
 					if (fn != null)
 					{
@@ -3429,7 +3544,7 @@
 			{
 				var name = this.state.style['shape'];
 				
-				if (this.state.view.graph.cellRenderer.defaultShapes[name] == null &&
+				if (mxCellRenderer.defaultShapes[name] == null &&
 					mxStencilRegistry.getStencil(name) == null)
 				{
 					name = mxConstants.SHAPE_CONNECTOR;
@@ -3672,12 +3787,12 @@
 									new mxConnectionConstraint(new mxPoint(0.25, 1), true),
 									new mxConnectionConstraint(new mxPoint(0.5, 1), true),
 									new mxConnectionConstraint(new mxPoint(0.75, 1), true),
-									new mxConnectionConstraint(new mxPoint(0.1, 0.25), true),
-									new mxConnectionConstraint(new mxPoint(0.2, 0.5), true),
-									new mxConnectionConstraint(new mxPoint(0.1, 0.75), true),
-									new mxConnectionConstraint(new mxPoint(0.9, 0.25), true),
+									new mxConnectionConstraint(new mxPoint(0, 0.25), true),
+									new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+									new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+									new mxConnectionConstraint(new mxPoint(1, 0.25), true),
 									new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-									new mxConnectionConstraint(new mxPoint(0.9, 0.75), true)];
+									new mxConnectionConstraint(new mxPoint(1, 0.75), true)];
 	mxLine.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.25, 0.5), false),
 	                                new mxConnectionConstraint(new mxPoint(0.75, 0.5), false),
@@ -3695,13 +3810,12 @@
 	mxHexagon.prototype.constraints = [new mxConnectionConstraint(new mxPoint(0.375, 0), true),
 	                                    new mxConnectionConstraint(new mxPoint(0.5, 0), true),
 	                                   new mxConnectionConstraint(new mxPoint(0.625, 0), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.125, 0.25), true),
+	                                   new mxConnectionConstraint(new mxPoint(0, 0.25), true),
 	                                   new mxConnectionConstraint(new mxPoint(0, 0.5), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.125, 0.75), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.875, 0.25), true),
-	                                   new mxConnectionConstraint(new mxPoint(0, 0.5), true),
+	                                   new mxConnectionConstraint(new mxPoint(0, 0.75), true),
+	                                   new mxConnectionConstraint(new mxPoint(1, 0.25), true),
 	                                   new mxConnectionConstraint(new mxPoint(1, 0.5), true),
-	                                   new mxConnectionConstraint(new mxPoint(0.875, 0.75), true),
+	                                   new mxConnectionConstraint(new mxPoint(1, 0.75), true),
 	                                   new mxConnectionConstraint(new mxPoint(0.375, 1), true),
 	                                    new mxConnectionConstraint(new mxPoint(0.5, 1), true),
 	                                   new mxConnectionConstraint(new mxPoint(0.625, 1), true)];

@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -70,6 +72,8 @@ import com.mxgraph.util.mxUndoableEdit;
 public class mxGraphModel extends mxEventSource implements mxIGraphModel,
 		Serializable
 {
+
+	private static final Logger log = Logger.getLogger(mxGraphModel.class.getName());
 
 	/**
 	 * Holds the root cell, which in turn contains the cells that represent the
@@ -313,7 +317,7 @@ public class mxGraphModel extends mxEventSource implements mxIGraphModel,
 			}
 			catch (CloneNotSupportedException e)
 			{
-				// ignore
+				log.log(Level.SEVERE, "Failed to clone cells", e);
 			}
 		}
 
@@ -494,7 +498,9 @@ public class mxGraphModel extends mxEventSource implements mxIGraphModel,
 			}
 			catch (NumberFormatException e)
 			{
-				// ignore
+				// most likely this just means a custom cell id and that it's
+				// not a simple number - should be safe to skip
+				log.log(Level.FINEST, "Failed to parse cell id", e);
 			}
 
 			int childCount = mxc.getChildCount();
@@ -1704,7 +1710,45 @@ public class mxGraphModel extends mxEventSource implements mxIGraphModel,
 
 		return result.toArray();
 	}
-
+	
+	@Override
+	public String toString()
+	{
+		StringBuilder builder = new StringBuilder();
+		builder.append(getClass().getSimpleName());
+		builder.append(" [");
+		builder.append("root=");
+		builder.append(root);
+		builder.append(", cells=");
+		
+		if (cells != null)
+		{
+			builder.append("<");
+			builder.append(cells.size());
+			builder.append(" entries>");
+		}
+		else
+		{
+			builder.append("null");
+		}
+		
+		builder.append(", maintainEdgeParent=");
+		builder.append(maintainEdgeParent);
+		builder.append(", createIds=");
+		builder.append(createIds);
+		builder.append(", nextId=");
+		builder.append(nextId);
+		builder.append(", currentEdit=");
+		builder.append(currentEdit);
+		builder.append(", updateLevel=");
+		builder.append(updateLevel);
+		builder.append(", endingUpdate=");
+		builder.append(endingUpdate);
+		builder.append("]");
+		
+		return builder.toString();
+	}
+	
 	//
 	// Visitor patterns
 	//

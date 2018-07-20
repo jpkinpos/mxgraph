@@ -1,5 +1,5 @@
 var indexSectionsWithContent = {
-   "Classes": {
+   "Interfaces": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -59,7 +59,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Interfaces": {
+   "Classes": {
       "Symbols": false,
       "Numbers": false,
       "A": false,
@@ -89,7 +89,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "General": {
+   "Variables": {
       "Symbols": false,
       "Numbers": false,
       "A": true,
@@ -149,7 +149,7 @@ var indexSectionsWithContent = {
       "Y": false,
       "Z": false
       },
-   "Variables": {
+   "General": {
       "Symbols": false,
       "Numbers": false,
       "A": true,

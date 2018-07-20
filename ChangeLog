@@ -1,3 +1,88 @@
+06-JUN-2018: 3.9.8
+
+- Fixes incorrect logging level in codecs
+- Adds mxShape.isRoundable
+
+22-JUN-2018: 3.9.7
+
+- Adds mxCylinder.getCylinderSize
+- Adds mxConstants.STYLE_ANCHOR_POINT_DIRECTION
+- Fixes mxGraphicsCanvas2D rotated text with HTML_SCALE [Java]
+- Adds webkit-print-color-adjust in mxPrintPreview
+- Adds mxConstants.STYLE_BACKGROUND_OUTLINE
+
+31-MAY-2018: 3.9.6
+
+- Adds mxConnectionHandler.isCellEnabled
+- Fixes outline for shapes with no stroke
+
+24-MAY-2018: 3.9.5
+
+- Fixes possible NPE in mxDragSource.dragEnter
+
+17-MAY-2018: 3.9.4
+
+- Adds optional state argument in mxTooltipHandler.reset
+- Adds mxDragSource.checkEventSource, getElementForEvent
+- Adds mxCellRenderer.minSvgStrokeWidth
+- Fixes use of innerText in mxUtils.getTextContent
+- Adds mxTooltipHandler.getStateForEvent hook
+- Adds tolerance for straight edge detection
+- Uses Object for mxResources.resources
+
+05-MAR-2018: 3.9.3
+
+- Fixes post is not a function
+
+28-FEB-2018: 3.9.2
+
+- Adds supercall to fire execute event in mxMorphing
+- Allows for 0.5px steps in mxGraphHandler.roundLength
+- Fixes possible inconsistency in mxChildChangeCodec
+- Clears selection after editing in mxCellEditor
+- Hides special handles while editing in mxVertexHandler
+- Handles file protocol in mxUrlConverter
+- mxCellEditor handles SVG with absolute position
+- Fixes cloning of edges in mxEdgeHandler
+
+27-JAN-2018: 3.9.1
+
+- Adds resources.html example
+- Adds mxCellEditor.isCancelEditingKeyEvent
+- Adds mxClient.loadResources
+- Adds mxGraph.getLinkForCell hook
+
+19-JAN-2018: 3.9.0
+
+- Add layout.isAncestor where child == parent returns false
+- Removes duplicate WeightedCellSorter
+- Fixes recursion in mxGraph.cellsFolded
+- Adds mxRubberband.fadeOut switch
+- Fixes ignored node values in mxUtils.getPrettyXml 
+- Adds editing for edge terminal points
+- Fixes redraw after remove change in mxEdgeHandler
+- Adds loggers, fixes silent fail cases
+- Fixes inline handler in mxEvent.disableContextMenu
+- Fixes mxPanningHandler for mouse up over scrollbar
+- Float loop router ignored for more than 1 point
+- Adds mxVertexHandler.getRotationHandlePosition
+
+30-NOV-2017: 3.8.0
+
+- Moves mxCellRenderer.prototype.defaultShapes to mxCellRenderer
+- Fixes handling of touch events in mxGraph.isEventIgnored
+- Adds mxSelectionCellsHandler.isHandlerActive hook
+
+24-NOV-2017: 3.7.6
+
+- Adds toString methods in some classes in Java
+- Fixes text flow after shape change, text size cache
+- Fixes return value of mxUtils.loadDocument in Java
+- Resets constraint handler after translate
+- Adds mxCellRenderer.checkPlaceholderStyles
+- Adds links on shapes in mxPrintPreview
+- Adds mxCellRenderer.doRedrawShape
+
 28-AUG-2017: 3.7.5
 
 - Adds line jumps in grapheditor example

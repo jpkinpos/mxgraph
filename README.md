@@ -3,11 +3,13 @@ mxgraph
 
 mxGraph is a fully client side JavaScript diagramming library that uses SVG and HTML for rendering. [draw.io](https://www.draw.io) is an example that extends the functionality of this library. The [sources to draw.io](https://github.com/jgraph/draw.io) are also available.
 
+Note this is the release repo. The development repo is on [Bitbucket](https://bitbucket.org/jgraph/mxgraph2). Submit PRs there.
+
 If you want to build something like draw.io, [GraphEditor](https://jgraph.github.io/mxgraph/javascript/examples/grapheditor/www/index.html) is the best example to use as a base.
 
-The npm build is [here](https://www.npmjs.com/package/mxgraph).
+The npm build is [here](https://www.npmjs.com/package/mxgraph)
 
-mxGraph supports IE 11, Chrome 32+, Firefox 38+, Safari 7.1.x, 8.0.x, 9.1.x and 10.0.x, Opera 20+, Native Android browser 5.1.x+, the default browser in the current and previous major iOS versions (e.g. 10.x and 9.x) and Edge 23+.
+mxGraph supports IE 11, Chrome 43+, Firefox 45+, Safari 9.1.x, 10.1.x and 11.0.x, Opera 30+, Native Android browser 5.1.x+, the default browser in the current and previous major iOS versions (e.g. 11.x and 10.x) and Edge 31+.
 
 mxGraph uses no third-party software, it requires no plugins and can be integrated in virtually any framework.
 
@@ -19,7 +21,7 @@ In the root folder there is an index.html file that contains links to all resour
 Support
 =======
 
-There is a [mxgraph tag on Stack Overflow](http://stackoverflow.com/questions/tagged/mxgraph) that we try to keep answered. Please ensure your questions adhere to the [SO guidelines](http://stackoverflow.com/help/on-topic), otherwise it will be closed.
+There is a [mxgraph tag on Stack Overflow](http://stackoverflow.com/questions/tagged/mxgraph). Please ensure your questions adhere to the [SO guidelines](http://stackoverflow.com/help/on-topic), otherwise it will be closed.
 
 License
 =======
