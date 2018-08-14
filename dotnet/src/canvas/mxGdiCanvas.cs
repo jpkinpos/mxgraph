@@ -1394,8 +1394,26 @@ namespace com.mxgraph
                         rect = path.GetBounds();
                     }
 
-                    // Draws the text
-                    g.DrawString(text, font, brush, rect, format);
+                    //Parse HTML Image Code
+                    if(text.Contains("img src="))
+                    {
+                        int idx1 = text.IndexOf('\"');
+                        int idx2 = text.LastIndexOf('\"');
+                        string imageRelativePath = text.Substring(idx1 + 1, idx2 - idx1 - 1);
+                        string finalPath = string.Empty;
+                        if (imageRelativePath.Contains("../"))
+                        {
+                            finalPath = System.Web.Hosting.HostingEnvironment.MapPath("~/" + imageRelativePath.Replace("../", ""));
+                            Image htmlImg = new Bitmap(finalPath);
+                            RectangleF newRect = new RectangleF(x + x / 2, y, htmlImg.Width, htmlImg.Height);
+                            g.DrawImage(htmlImg, newRect);
+                        }
+                    }
+                    else
+                    {
+                        // Draws the text
+                        g.DrawString(text, font, brush, rect, format);
+                    }
 
                     // Resets the rotation
                     g.ResetTransform();
