@@ -1744,7 +1744,8 @@ mxConnectionHandler.prototype.mouseUp = function(sender, me)
 			}
 
 			// If the cells differ, or if they are the same but the constraints differ, connect
-			if (target.getId() != source.getId() || this.checkConstraints(c1, c2)) {
+			var differentCells = (target==null || source==null || target.getId() != source.getId());
+			if (differentCells || this.checkConstraints(c1, c2)) {
 				this.connect(source, target, me.getEvent(), me.getCell());
 			}
 		}
