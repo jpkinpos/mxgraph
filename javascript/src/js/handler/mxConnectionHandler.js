@@ -1726,8 +1726,8 @@ mxConnectionHandler.prototype.mouseUp = function(sender, me)
 		var c1 = this.sourceConstraint;
 		var c2 = this.constraintHandler.currentConstraint;
 		
-		// Inserts the edge if no validation error exists and if constraints differ
-		if (this.error == null && this.checkConstraints(c1, c2))
+		// Inserts the edge if no validation error exists
+		if (this.error == null)
 		{
 			var source = (this.previous != null) ? this.previous.cell : null;
 			var target = null;
@@ -1742,8 +1742,11 @@ mxConnectionHandler.prototype.mouseUp = function(sender, me)
 			{
 				target = this.currentState.cell;
 			}
-			
-			this.connect(source, target, me.getEvent(), me.getCell());
+
+			// If the cells differ, or if they are the same but the constraints differ, connect
+			if (target.getId() != source.getId() || this.checkConstraints(c1, c2)) {
+				this.connect(source, target, me.getEvent(), me.getCell());
+			}
 		}
 		else
 		{
