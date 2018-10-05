@@ -169,7 +169,7 @@ mxMultiplicity.prototype.check = function(graph, edge, source, target, sourceOut
 	{
 		if (this.countError != null && 
 			((this.source && (this.max == 0 || (sourceOut >= this.max))) ||
-			(!this.source && (this.max == 0 || (targetIn >= this.max)))))
+			(!this.target && (this.max == 0 || (targetIn >= this.max)))))
 		{
 			error += this.countError + '\n';
 		}
