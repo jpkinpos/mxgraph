@@ -1012,7 +1012,7 @@ mxSvgCanvas2D.prototype.ellipse = function(x, y, w, h)
  * 
  * Private helper function to create SVG elements
  */
-mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
+mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV, rotation)
 {
 	src = this.converter.convert(src);
 	
@@ -1020,6 +1020,7 @@ mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
 	aspect = (aspect != null) ? aspect : true;
 	flipH = (flipH != null) ? flipH : false;
 	flipV = (flipV != null) ? flipV : false;
+	rotation = (rotation != null) ? rotation : 0;
 	
 	var s = this.state;
 	x += s.dx;
@@ -1051,7 +1052,7 @@ mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
 		node.setAttribute('opacity', s.alpha * s.fillAlpha);
 	}
 	
-	var tr = this.state.transform || '';
+	var tr = s.transform || '';
 	
 	if (flipH || flipV)
 	{
@@ -1074,6 +1075,13 @@ mxSvgCanvas2D.prototype.image = function(x, y, w, h, src, aspect, flipH, flipV)
 		
 		// Adds image tansformation to existing transform
 		tr += 'scale(' + sx + ',' + sy + ')translate(' + (dx * s.scale) + ',' + (dy * s.scale) + ')';
+	}
+	else if (rotation != 0)
+	{
+		var dx = x + w / 2;
+		var dy = y + h / 2;
+
+		tr += 'rotate(' + (rotation) + ',' + (dx * s.scale) + ',' + (dy * s.scale) + ')';
 	}
 
 	if (tr.length > 0)
