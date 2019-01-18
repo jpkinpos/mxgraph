@@ -78,7 +78,11 @@ mxShape.prototype.getConstraints = function(style)
 Graph = function(container, model, renderHint, stylesheet, themes)
 {
 	mxGraph.call(this, container, model, renderHint, stylesheet);
-	
+
+	// This graph is part of an editor and has some special
+	// behavior.
+	this.editorgraph = true;
+
 	this.themes = themes || this.defaultThemes;
 	this.currentEdgeStyle = mxUtils.clone(this.defaultEdgeStyle);
 	this.currentVertexStyle = mxUtils.clone(this.defaultVertexStyle);
@@ -7745,6 +7749,7 @@ if (typeof mxVertexHandler != 'undefined')
 			mxGraphHandler.prototype.mouseDown = function(sender, me)
 			{
 				graphHandlerMouseDown.apply(this, arguments);
+				if (!this.graph.editorgraph) return;
 	
 				if (mxEvent.isTouchEvent(me.getEvent()) && this.graph.isCellSelected(me.getCell()) &&
 					this.graph.getSelectionCount() > 1)
@@ -7965,10 +7970,12 @@ if (typeof mxVertexHandler != 'undefined')
 		var mxRubberbandReset = mxRubberband.prototype.reset;
 		mxRubberband.prototype.reset = function()
 		{
-			if (this.secondDiv != null)
-			{
-				this.secondDiv.parentNode.removeChild(this.secondDiv);
-				this.secondDiv = null;
+			if (this.graph.editorgraph) {
+				if (this.secondDiv != null)
+				{
+					this.secondDiv.parentNode.removeChild(this.secondDiv);
+					this.secondDiv = null;
+				}
 			}
 			
 			mxRubberbandReset.apply(this, arguments);
@@ -7983,6 +7990,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxEdgeHandler.prototype.updatePreviewState = function(edge, point, terminalState, me)
 		{
 			mxEdgeHandlerUpdatePreviewState.apply(this, arguments);
+			if (!this.graph.editorgraph) return;
 			
 	    	if (terminalState != this.currentTerminalState)
 	    	{
@@ -8002,6 +8010,10 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		mxEdgeHandler.prototype.isOutlineConnectEvent = function(me)
 		{
+			if (!this.graph.editorgraph) {
+				return mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments);
+			}
+
 			return (this.currentTerminalState != null && me.getState() == this.currentTerminalState && timeOnTarget > 2000) ||
 				((this.currentTerminalState == null || mxUtils.getValue(this.currentTerminalState.style, 'outlineConnect', '1') != '0') &&
 				mxEdgeHandlerIsOutlineConnectEvent.apply(this, arguments));
@@ -8050,7 +8062,9 @@ if (typeof mxVertexHandler != 'undefined')
 		var vertexHandlerCreateSizerShape = mxVertexHandler.prototype.createSizerShape;
 		mxVertexHandler.prototype.createSizerShape = function(bounds, index, fillColor)
 		{
-			this.handleImage = (index == mxEvent.ROTATION_HANDLE) ? HoverIcons.prototype.rotationHandle : (index == mxEvent.LABEL_HANDLE) ? this.secondaryHandleImage : this.handleImage;
+			if (this.graph.editorgraph) {
+				this.handleImage = (index == mxEvent.ROTATION_HANDLE) ? HoverIcons.prototype.rotationHandle : (index == mxEvent.LABEL_HANDLE) ? this.secondaryHandleImage : this.handleImage;
+			}
 			
 			return vertexHandlerCreateSizerShape.apply(this, arguments);
 		};
@@ -8059,7 +8073,7 @@ if (typeof mxVertexHandler != 'undefined')
 		var mxGraphHandlerGetBoundingBox = mxGraphHandler.prototype.getBoundingBox;
 		mxGraphHandler.prototype.getBoundingBox = function(cells)
 		{
-			if (cells != null && cells.length == 1)
+			if (this.graph.editorgraph && cells != null && cells.length == 1)
 			{
 				var model = this.graph.getModel();
 				var parent = model.getParent(cells[0]);
@@ -8083,6 +8097,11 @@ if (typeof mxVertexHandler != 'undefined')
 		var mxVertexHandlerGetSelectionBounds = mxVertexHandler.prototype.getSelectionBounds;
 		mxVertexHandler.prototype.getSelectionBounds = function(state)
 		{
+			if (!this.graph.editorgraph)
+			{
+				return mxVertexHandlerGetSelectionBounds.apply(this, arguments);
+			}
+
 			var model = this.graph.getModel();
 			var parent = model.getParent(state.cell);
 			var geo = this.graph.getCellGeometry(state.cell);
@@ -8104,6 +8123,11 @@ if (typeof mxVertexHandler != 'undefined')
 		var mxVertexHandlerMouseDown = mxVertexHandler.prototype.mouseDown;
 		mxVertexHandler.prototype.mouseDown = function(sender, me)
 		{
+			if (!this.graph.editorgraph)
+			{
+				mxVertexHandlerMouseDown.apply(this, arguments);
+			}
+
 			var model = this.graph.getModel();
 			var parent = model.getParent(this.state.cell);
 			var geo = this.graph.getCellGeometry(this.state.cell);
@@ -8121,6 +8145,7 @@ if (typeof mxVertexHandler != 'undefined')
 		// Shows rotation handle for edge labels.
 		mxVertexHandler.prototype.isRotationHandleVisible = function()
 		{
+			if (!this.graph.editorgraph) return false;
 			return this.graph.isEnabled() && this.rotationEnabled && this.graph.isCellRotatable(this.state.cell) &&
 				(mxGraphHandler.prototype.maxCells <= 0 || this.graph.getSelectionCount() < mxGraphHandler.prototype.maxCells);
 		};
@@ -8137,6 +8162,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.mouseMove = function(sender, me)
 		{
 			vertexHandlerMouseMove.apply(this, arguments);
+			if(!this.graph.editorgraph) return;
 			
 			if (this.graph.graphHandler.first != null)
 			{
@@ -8151,6 +8177,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.mouseUp = function(sender, me)
 		{
 			vertexHandlerMouseUp.apply(this, arguments);
+			if(!this.graph.editorgraph) return;
 			
 			// Shows rotation handle only if one vertex is selected
 			if (this.rotationShape != null && this.rotationShape.node != null)
@@ -8163,6 +8190,8 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.init = function()
 		{
 			vertexHandlerInit.apply(this, arguments);
+			if(!this.graph.editorgraph) return;
+
 			var redraw = false;
 			
 			if (this.rotationShape != null)
@@ -8313,6 +8342,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxEdgeHandler.prototype.init = function()
 		{
 			edgeHandlerInit.apply(this, arguments);
+			if (!this.graph.editorgraph) return;
 			
 			// Disables connection points
 			this.constraintHandler.isEnabled = mxUtils.bind(this, function()
@@ -8365,7 +8395,8 @@ if (typeof mxVertexHandler != 'undefined')
 		
 		mxConnectionHandler.prototype.init = function()
 		{
-			connectionHandlerInit.apply(this, arguments);
+			var ret = connectionHandlerInit.apply(this, arguments);
+			if (!this.graph.editorgraph) return ret;
 			
 			this.constraintHandler.isEnabled = mxUtils.bind(this, function()
 			{
@@ -8377,6 +8408,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.redrawHandles = function()
 		{
 			vertexHandlerRedrawHandles.apply(this);
+			if (!this.graph.editorgraph) return;
 
 			if (this.state != null && this.linkHint != null)
 			{
@@ -8410,6 +8442,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.reset = function()
 		{
 			vertexHandlerReset.apply(this, arguments);
+			if (!this.graph.editorgraph) return;
 			
 			// Shows rotation handle only if one vertex is selected
 			if (this.rotationShape != null && this.rotationShape.node != null)
@@ -8422,6 +8455,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxVertexHandler.prototype.destroy = function()
 		{
 			vertexHandlerDestroy.apply(this, arguments);
+			if (!this.graph.editorgraph) return;
 			
 			if (this.linkHint != null)
 			{
@@ -8451,6 +8485,12 @@ if (typeof mxVertexHandler != 'undefined')
 		var edgeHandlerRedrawHandles = mxEdgeHandler.prototype.redrawHandles;
 		mxEdgeHandler.prototype.redrawHandles = function()
 		{
+			if (!this.graph.editorgraph)
+			{
+  				edgeHandlerRedrawHandles.apply(this);
+				return;
+			}
+
 			// Workaround for special case where handler
 			// is reset before this which leads to a NPE
 			if (this.marker != null)
@@ -8477,6 +8517,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxEdgeHandler.prototype.reset = function()
 		{
 			edgeHandlerReset.apply(this, arguments);
+			if (!this.graph.editorgraph) return;
 			
 			if (this.linkHint != null)
 			{
@@ -8488,6 +8529,7 @@ if (typeof mxVertexHandler != 'undefined')
 		mxEdgeHandler.prototype.destroy = function()
 		{
 			edgeHandlerDestroy.apply(this, arguments);
+			if (!this.graph.editorgraph) return;
 			
 			if (this.linkHint != null)
 			{
