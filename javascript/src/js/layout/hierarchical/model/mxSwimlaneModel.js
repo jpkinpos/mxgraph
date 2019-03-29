@@ -427,6 +427,18 @@ mxSwimlaneModel.prototype.initialRank = function()
 			var removedCell = startNodes.shift();
 			startNodes.push(internalNode);
 
+			if (hasEndlessLoop(startNodes)){
+				console.error('endless loop detected');
+				if (!solveEndlessLoop(startNodes)){
+				     //todo: if unable to solve the endless loop
+					console.error('unable to solve the endless loop. Please check below phases and transitions');
+					console.log(startNodes);
+					break;
+				} else{
+					console.error('endless loop solved');
+				}
+			}
+
 			if (removedCell == internalNode && startNodes.length == 1)
 			{
 				// This is an error condition, we can't get out of
@@ -464,6 +476,53 @@ mxSwimlaneModel.prototype.initialRank = function()
 //		}
 //	}
 };
+
+function solveEndlessLoop(nodes){
+	console.log('Try to solve endless loop of below phases and transitions');
+	console.log(nodes);
+	for (var i = 0;i <= nodes.length-1;i++) {
+		for (var j = 0;j <= nodes[i].connectsAsTarget.length-1;j++){
+			if ( nodes[i].connectsAsTarget[j].temp[0] !== 5270620 && nodes[i].connectsAsTarget[j].source.swimlaneIndex === nodes[i].swimlaneIndex &&
+				 nodes[i].connectsAsTarget[j].source.isAncestor(nodes[i])){
+				nodes[i].connectsAsTarget[j].invert();
+				// nodes[i].connectsAsTarget[j].temp[0] = 5270620;
+				nodes[i].connectsAsSource.push(nodes[i].connectsAsTarget[j]);
+				mxUtils.remove(nodes[i].connectsAsTarget[j], nodes[i].connectsAsTarget);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+function hasEndlessLoop(nodes){
+	var count = 0;
+	for (var i = 0;i <= nodes.length-1;i++){
+		if (!isIncomingEdgeProcessed(nodes[i])){
+			count++;
+		}
+	}
+	// According to topological sort,
+	// if a node has any incoming edge not processed, then it can not be polled from the queue.
+	// Thus if all nodes in the queue have incoming edge not processed, then infinite loop happens.
+	return count === nodes.length;
+}
+
+function isIncomingEdgeProcessed(node){
+	var incomingEdges = node.connectsAsTarget;
+	var isProcessed = true;
+
+	for (var i = 0; i < incomingEdges.length; i++)
+	{
+		var incomingEdge = incomingEdges[i];
+		if (incomingEdge.temp[0] !== 5270620)
+		{
+			isProcessed = false;
+			break;
+		}
+	}
+	return isProcessed;
+}
 
 /**
  * Function: maxChainDfs
