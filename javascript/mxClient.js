@@ -9731,8 +9731,8 @@ var mxEvent =
 	 * 
 	 * funct - Handler function that takes the event argument and a boolean up
 	 * argument for the mousewheel direction.
-     *
-     * elem - the specified DOM element, default window
+	 *
+	 * elem - the specified DOM element, default window
 	 */
 	addMouseWheelListener: function(funct, elem)
 	{
@@ -9765,20 +9765,20 @@ var mxEvent =
 					funct(evt, delta > 0);
 				}
 			};
-			
-            var eventName = 'mousewheel';
-            var observableElem;
-            // Webkit has NS event API, but IE event name and details
-            if (mxClient.IS_NS && document.documentMode == null)
-            {
-                eventName = (mxClient.IS_SF || mxClient.IS_GC) ? eventName : 'DOMMouseScroll';
-                observableElem = elem ? elem : window;
-            }
-            else
-            {
-                observableElem = document;
-            }
-            mxEvent.addListener(observableElem, eventName, wheelHandler);
+
+			var eventName = 'mousewheel';
+			var observableElem;
+			// Webkit has NS event API, but IE event name and details
+			if (mxClient.IS_NS && document.documentMode == null)
+			{
+				eventName = (mxClient.IS_SF || mxClient.IS_GC) ? eventName : 'DOMMouseScroll';
+				observableElem = elem ? elem : window;
+			}
+			else
+			{
+				observableElem = document;
+			}
+			mxEvent.addListener(observableElem, eventName, wheelHandler);
 		}
 	},
 	
