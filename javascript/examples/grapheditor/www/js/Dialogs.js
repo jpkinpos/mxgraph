@@ -32,15 +32,9 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	this.editorUi = editorUi;
 	
 	var input = document.createElement('input');
+	input.type = 'color';
 	input.style.marginBottom = '10px';
 	input.style.width = '216px';
-	
-	// Required for picker to render in IE
-	if (mxClient.IS_IE)
-	{
-		input.style.marginTop = '10px';
-		document.body.appendChild(input);
-	}
 	
 	this.init = function()
 	{
@@ -50,16 +44,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		}
 	};
 
-	var picker = new jscolor.color(input);
-	picker.pickerOnfocus = false;
-	picker.showPicker();
-
 	var div = document.createElement('div');
-	jscolor.picker.box.style.position = 'relative';
-	jscolor.picker.box.style.width = '230px';
-	jscolor.picker.box.style.height = '100px';
-	jscolor.picker.box.style.paddingBottom = '10px';
-	div.appendChild(jscolor.picker.box);
 
 	var center = document.createElement('center');
 	
@@ -123,12 +108,13 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 						{
 							if (clr == 'none')
 							{
-								picker.fromString('ffffff');
+								input.type = 'text';
 								input.value = 'none';
 							}
 							else
 							{
-								picker.fromString(clr);
+								input.type = 'color';
+								input.value = '#' + clr;
 							}
 						});
 					}
@@ -165,7 +151,7 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 		return table;
 	};
 
-	div.appendChild(input);
+	center.appendChild(input);
 	mxUtils.br(div);
 	
 	// Adds recent colors
@@ -235,17 +221,17 @@ var ColorDialog = function(editorUi, color, apply, cancelFn)
 	{
 		if (color == 'none')
 		{
-			picker.fromString('ffffff');
+			input.type = 'text';
 			input.value = 'none';
 		}
 		else
 		{
-			picker.fromString(color);
+			input.type = 'color';
+			input.value = '#' + color;
 		}
 	}
 	
 	div.appendChild(buttons);
-	this.picker = picker;
 	this.colorInput = input;
 
 	// LATER: Only fires if input if focused, should always
