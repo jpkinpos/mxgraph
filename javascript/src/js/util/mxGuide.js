@@ -307,6 +307,8 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, clone)
 		}
 		else if (this.guideX != null)
 		{
+			var minY = null;
+                    	var maxY = null;
 			if (stateX != null && bounds != null)
 			{
 				minY = Math.min(bounds.y + dy - this.graph.panDy, stateX.y);
@@ -333,6 +335,8 @@ mxGuide.prototype.move = function(bounds, delta, gridEnabled, clone)
 		}
 		else if (this.guideY != null)
 		{
+			var minX = null;
+                    	var maxX = null;
 			if (stateY != null && bounds != null)
 			{
 				minX = Math.min(bounds.x + dx - this.graph.panDx, stateY.x);
