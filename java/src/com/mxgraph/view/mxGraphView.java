@@ -1760,8 +1760,8 @@ public class mxGraphView extends mxEventSource
 
 				// Constructs the relative point for the label
 				return new mxPoint(
-						Math.round(((totalLength / 2 - length - projlen) / totalLength)
-								* -2), Math.round(yDistance / scale));
+						((totalLength / 2 - length - projlen) / totalLength)
+								* -2, yDistance / scale);
 			}
 		}
 
