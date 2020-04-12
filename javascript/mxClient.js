@@ -89355,7 +89355,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxCellCodec
 	 *
 	 * Codec for <mxCell>s. This class is created and registered
-	 * dynamically at load time and used implicitely via <mxCodec>
+	 * dynamically at load time and used implicitly via <mxCodec>
 	 * and the <mxCodecRegistry>.
 	 *
 	 * Transient Fields:
@@ -89544,7 +89544,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxModelCodec
 	 *
 	 * Codec for <mxGraphModel>s. This class is created and registered
-	 * dynamically at load time and used implicitely via <mxCodec>
+	 * dynamically at load time and used implicitly via <mxCodec>
 	 * and the <mxCodecRegistry>.
 	 */
 	var codec = new mxObjectCodec(new mxGraphModel());
@@ -89624,7 +89624,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxRootChangeCodec
 	 *
 	 * Codec for <mxRootChange>s. This class is created and registered
-	 * dynamically at load time and used implicitely via <mxCodec> and
+	 * dynamically at load time and used implicitly via <mxCodec> and
 	 * the <mxCodecRegistry>.
 	 *
 	 * Transient Fields:
@@ -89707,7 +89707,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxChildChangeCodec
 	 *
 	 * Codec for <mxChildChange>s. This class is created and registered
-	 * dynamically at load time and used implicitely via <mxCodec> and
+	 * dynamically at load time and used implicitly via <mxCodec> and
 	 * the <mxCodecRegistry>.
 	 *
 	 * Transient Fields:
@@ -89875,7 +89875,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxTerminalChangeCodec
 	 *
 	 * Codec for <mxTerminalChange>s. This class is created and registered
-	 * dynamically at load time and used implicitely via <mxCodec> and
+	 * dynamically at load time and used implicitly via <mxCodec> and
 	 * the <mxCodecRegistry>.
 	 *
 	 * Transient Fields:
@@ -89916,7 +89916,7 @@ mxCodecRegistry.register(function()
  *
  * Codec for <mxValueChange>s, <mxStyleChange>s, <mxGeometryChange>s,
  * <mxCollapseChange>s and <mxVisibleChange>s. This class is created
- * and registered dynamically at load time and used implicitely
+ * and registered dynamically at load time and used implicitly
  * via <mxCodec> and the <mxCodecRegistry>.
  *
  * Transient Fields:
@@ -89981,7 +89981,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxGraphCodec
 	 *
 	 * Codec for <mxGraph>s. This class is created and registered
-	 * dynamically at load time and used implicitely via <mxCodec>
+	 * dynamically at load time and used implicitly via <mxCodec>
 	 * and the <mxCodecRegistry>.
 	 *
 	 * Transient Fields:
@@ -90009,7 +90009,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxGraphViewCodec
 	 *
 	 * Custom encoder for <mxGraphView>s. This class is created
-	 * and registered dynamically at load time and used implicitely via
+	 * and registered dynamically at load time and used implicitly via
 	 * <mxCodec> and the <mxCodecRegistry>. This codec only writes views
 	 * into a XML format that can be used to create an image for
 	 * the graph, that is, it contains absolute coordinates with
@@ -90204,7 +90204,7 @@ mxCodecRegistry.register(function()
  * Class: mxStylesheetCodec
  *
  * Codec for <mxStylesheet>s. This class is created and registered
- * dynamically at load time and used implicitely via <mxCodec>
+ * dynamically at load time and used implicitly via <mxCodec>
  * and the <mxCodecRegistry>.
  */
 var mxStylesheetCodec = mxCodecRegistry.register(function()
@@ -90423,7 +90423,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxDefaultKeyHandlerCodec
 	 *
 	 * Custom codec for configuring <mxDefaultKeyHandler>s. This class is created
-	 * and registered dynamically at load time and used implicitely via
+	 * and registered dynamically at load time and used implicitly via
 	 * <mxCodec> and the <mxCodecRegistry>. This codec only reads configuration
 	 * data for existing key handlers, it does not encode or create key handlers.
 	 */
@@ -90509,7 +90509,7 @@ mxCodecRegistry.register(function()
  * Class: mxDefaultToolbarCodec
  *
  * Custom codec for configuring <mxDefaultToolbar>s. This class is created
- * and registered dynamically at load time and used implicitely via
+ * and registered dynamically at load time and used implicitly via
  * <mxCodec> and the <mxCodecRegistry>. This codec only reads configuration
  * data for existing toolbars handlers, it does not encode or create toolbars.
  */
@@ -90823,7 +90823,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxDefaultPopupMenuCodec
 	 *
 	 * Custom codec for configuring <mxDefaultPopupMenu>s. This class is created
-	 * and registered dynamically at load time and used implicitely via
+	 * and registered dynamically at load time and used implicitly via
 	 * <mxCodec> and the <mxCodecRegistry>. This codec only reads configuration
 	 * data for existing popup menus, it does not encode or create menus. Note
 	 * that this codec only passes the configuration node to the popup menu,
@@ -90877,7 +90877,7 @@ mxCodecRegistry.register(function()
 	 * Class: mxEditorCodec
 	 *
 	 * Codec for <mxEditor>s. This class is created and registered
-	 * dynamically at load time and used implicitely via <mxCodec>
+	 * dynamically at load time and used implicitly via <mxCodec>
 	 * and the <mxCodecRegistry>.
 	 *
 	 * Transient Fields:
