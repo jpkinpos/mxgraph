@@ -216,7 +216,7 @@ mxHierarchicalLayout.prototype.execute = function(parent, roots)
 	this.edgeSourceTermCache = new mxDictionary();
 	this.edgesTargetTermCache = new mxDictionary();
 
-	if (roots != null && !(roots instanceof Array))
+	if (roots != null && !Array.isArray(roots))
 	{
 		roots = [roots];
 	}
