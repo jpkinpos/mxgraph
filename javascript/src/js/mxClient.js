@@ -379,7 +379,7 @@ var mxClient =
  */
 if (typeof(mxLoadResources) == 'undefined')
 {
-	mxLoadResources = true;
+	var mxLoadResources = true;
 }
 
 /**
@@ -398,7 +398,7 @@ if (typeof(mxLoadResources) == 'undefined')
  */
 if (typeof(mxForceIncludes) == 'undefined')
 {
-	mxForceIncludes = false;
+	var mxForceIncludes = false;
 }
 
 /**
@@ -416,7 +416,7 @@ if (typeof(mxForceIncludes) == 'undefined')
  */
 if (typeof(mxResourceExtension) == 'undefined')
 {
-	mxResourceExtension = '.txt';
+	var mxResourceExtension = '.txt';
 }
 
 /**
@@ -435,7 +435,7 @@ if (typeof(mxResourceExtension) == 'undefined')
  */
 if (typeof(mxLoadStylesheets) == 'undefined')
 {
-	mxLoadStylesheets = true;
+	var mxLoadStylesheets = true;
 }
 
 /**
